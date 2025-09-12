@@ -6,9 +6,15 @@ const EditRecipeForm = ({ recipe }) => {
   const [description, setDescription] = useState(recipe.description);
   const updateRecipe = useRecipeStore(state => state.updateRecipe);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    updateRecipe({ ...recipe, title, description });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Ensure the recipe object contains all the required fields
+    if (recipe.id && title && description) {
+      updateRecipe({ ...recipe, title, description });
+    } else {
+      console.error('Error: Missing recipe fields');
+    }
   };
 
   return (
