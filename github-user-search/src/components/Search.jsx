@@ -1,16 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { fetchUserData } from '../services/githubService';
 
-function Search({ onSearch, userData, loading, error }) {
-  const [username, setUsername] = React.useState('');  
+function Search() {
+  const [username, setUsername] = useState('');  
+  const [userData, setUserData] = useState(null);  
+  const [loading, setLoading] = useState(false);   
+  const [error, setError] = useState(null);        
 
+  
   const handleChange = (event) => {
     setUsername(event.target.value);  
   };
 
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (username.trim()) {
-      onSearch(username);  
+      setLoading(true);  
+      setError(null);    
+      setUserData(null); 
+
+      try {
+        const data = await fetchUserData(username);  
+        if (data) {
+          setUserData(data);  
+        } else {
+          setError('Looks like we can\'t find the user');  
+        }
+      } catch (err) {
+        setError('An error occurred while fetching the data');  
+      } finally {
+        setLoading(false);  
+      }
     }
   };
 
