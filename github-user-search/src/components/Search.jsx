@@ -5,36 +5,32 @@ function Search() {
   const [username, setUsername] = useState('');  
   const [location, setLocation] = useState('');  
   const [minRepos, setMinRepos] = useState('');  
-  const [userData, setUserData] = useState(null); 
+  const [userData, setUserData] = useState([]); 
   const [loading, setLoading] = useState(false);   
   const [error, setError] = useState(null);        
 
-  
   const handleChange = (event) => {
     setUsername(event.target.value);  
   };
 
-  
   const handleLocationChange = (event) => {
     setLocation(event.target.value);  
   };
 
-  
   const handleMinReposChange = (event) => {
     setMinRepos(event.target.value);  
   };
 
-  
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (username.trim() || location.trim() || minRepos.trim()) {
       setLoading(true);  
       setError(null);    
-      setUserData(null); 
+      setUserData([]);  
 
       try {
         const data = await fetchUserData(username, location, minRepos);  
-        if (data) {
+        if (data && data.length > 0) {
           setUserData(data);  
         } else {
           setError('Looks like we cant find the user'); 
@@ -77,17 +73,24 @@ function Search() {
       {loading && <p>Loading...</p>}  
       {error && <p style={{ color: 'red' }}>{error}</p>}  
 
-      {userData && !loading && !error && (
+      {userData.length > 0 && !loading && !error && (
         <div>
-          <h2>{userData.name}</h2>
-          <h3>{userData.login}</h3>  
-          <img src={userData.avatar_url} alt={userData.login} width="100" />  
-          <p>{userData.bio}</p>
-          <p>Location: {userData.location}</p>
-          <p>Public Repos: {userData.public_repos}</p>
-          <a href={userData.html_url} target="_blank" rel="noopener noreferrer">
-            Visit Profile
-          </a>
+          <h2>Search Results:</h2>
+          <div className="user-list">
+            {userData.map((user) => (
+              <div key={user.id} className="user-card p-4 border mb-4 rounded">
+                <img src={user.avatar_url} alt={user.login} width="100" />
+                <h3>{user.login}</h3>  
+                <p>{user.name}</p>
+                <p>{user.bio}</p>
+                <p>Location: {user.location || 'N/A'}</p>
+                <p>Public Repos: {user.public_repos}</p>
+                <a href={user.html_url} target="_blank" rel="noopener noreferrer">
+                  Visit Profile
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
