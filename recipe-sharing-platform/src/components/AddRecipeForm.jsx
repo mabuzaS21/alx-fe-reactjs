@@ -4,41 +4,50 @@ const AddRecipeForm = () => {
   const [title, setTitle] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [steps, setSteps] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!title.trim()) newErrors.title = 'Title is required.';
+    if (!ingredients.trim()) {
+      newErrors.ingredients = 'Ingredients are required.';
+    } else {
+      const list = ingredients.split(',').map(i => i.trim());
+      if (list.length < 2) {
+        newErrors.ingredients = 'Please include at least two ingredients.';
+      }
+    }
+
+    if (!steps.trim()) newErrors.steps = 'Preparation steps are required.';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!title || !ingredients || !steps) {
-      setError('All fields are required.');
-      return;
-    }
+    if (!validate()) return;
 
-    const ingredientsList = ingredients.split(',').map((item) => item.trim());
-    if (ingredientsList.length < 2) {
-      setError('Please enter at least two ingredients.');
-      return;
-    }
-
-    setError('');
     const newRecipe = {
       title,
-      ingredients: ingredientsList,
-      steps: steps.split('.').map((s) => s.trim()).filter(Boolean),
+      ingredients: ingredients.split(',').map(i => i.trim()),
+      steps: steps.split('.').map(s => s.trim()).filter(Boolean),
     };
 
     console.log('Submitted Recipe:', newRecipe);
-    alert('Recipe submitted (not saved — mock only).');
+    alert('Recipe submitted (mock only).');
 
     setTitle('');
     setIngredients('');
     setSteps('');
+    setErrors({});
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg mt-8">
       <h2 className="text-2xl font-bold mb-6">Add a New Recipe</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1">Recipe Title</label>
@@ -49,6 +58,7 @@ const AddRecipeForm = () => {
             className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="e.g. Chicken Alfredo"
           />
+          {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
         </div>
 
         <div>
@@ -59,6 +69,7 @@ const AddRecipeForm = () => {
             className="w-full border border-gray-300 p-2 rounded h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="e.g. chicken, cream, pasta, garlic"
           />
+          {errors.ingredients && <p className="text-red-500 text-sm mt-1">{errors.ingredients}</p>}
         </div>
 
         <div>
@@ -69,6 +80,7 @@ const AddRecipeForm = () => {
             className="w-full border border-gray-300 p-2 rounded h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="e.g. Cook pasta. Fry chicken. Mix with sauce."
           />
+          {errors.steps && <p className="text-red-500 text-sm mt-1">{errors.steps}</p>}
         </div>
 
         <button
