@@ -1,15 +1,15 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-const Post = () => {
+const BlogPost = () => {
   const { id } = useParams();
 
   return (
     <div>
-      <h2>Post ID: {id}</h2>
-      <p>This is a dynamic page for post {id}.</p>
+      <h2>Blog Post</h2>
+      <p>You are viewing the blog post with ID: {id}</p>
     </div>
   );
 };
 
-export default Post;
+export default BlogPost;
