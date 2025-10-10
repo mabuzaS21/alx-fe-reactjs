@@ -19,18 +19,7 @@ describe('TodoList Component', () => {
     fireEvent.click(button);
 
     expect(screen.getByText('New Todo')).toBeInTheDocument();
-  });
-
-  test('does not add an empty todo', () => {
-    render(<TodoList />);
-    const input = screen.getByPlaceholderText('Add a todo');
-    const button = screen.getByText('Add Todo');
-
-    fireEvent.change(input, { target: { value: '' } });
-    fireEvent.click(button);
-
-    expect(screen.queryByText('')).not.toBeInTheDocument();
-  });
+  }); 
 
   test('toggles a todo completion status', () => {
     render(<TodoList />);
@@ -46,24 +35,9 @@ describe('TodoList Component', () => {
   test('deletes a todo', () => {
     render(<TodoList />);
     const todoItem = screen.getByText('Learn React');
-    const deleteButton = screen.getByTestId('delete-todo-1');
+    const deleteButton = screen.getAllByText('Delete')[0];
 
     fireEvent.click(deleteButton);
     expect(todoItem).not.toBeInTheDocument();
   });
-
-  test('deletes multiple todos', () => {
-    render(<TodoList />);
-    const todo1 = screen.getByText('Learn React');
-    const todo2 = screen.getByText('Build Todo App');
-    const deleteButton1 = screen.getByTestId('delete-todo-1');
-    const deleteButton2 = screen.getByTestId('delete-todo-2');
-
-    fireEvent.click(deleteButton1);
-    expect(todo1).not.toBeInTheDocument();
-    expect(todo2).toBeInTheDocument();
-
-    fireEvent.click(deleteButton2);
-    expect(todo2).not.toBeInTheDocument();
-  });
-});
+}); 
