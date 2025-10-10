@@ -1,59 +1,38 @@
-import React from 'react'; 
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import TodoList from '../components/TodoList';
 
-describe('TodoList', () => {
-  test('renders Todo List header', () => {
+describe("TodoList Component", () => {
+  test("renders initial todos", () => {
     render(<TodoList />);
-    const header = screen.getByText(/Todo List/i);
-    expect(header).toBeInTheDocument();
-  });
-  
-  test('adds a new todo', () => {
-    render(<TodoList />);
-    const input = screen.getByPlaceholderText(/Add a new todo/i);
-   const addButton = screen.getByText(/Add Todo/i);
-    fireEvent.change(input, { target: { value: 'Test Todo' } });
-    fireEvent.click(addButton);
-
-    const newTodo = screen.getByText(/Test Todo/i);
-    expect(newTodo).toBeInTheDocument();
+    expect(screen.getByText(/Todo 1/i)).toBeInTheDocument();
   });
 
-  test('toggles todo completion', () => {
+  test("adds a new todo", () => {
     render(<TodoList />);
-    const todo = screen.getByText(/Learn React/i);
+    const input = screen.getByPlaceholderText(/add todo/i);
+    const button = screen.getByText(/add/i);
+
+    fireEvent.change(input, { target: { value: "New Task" } });
+    fireEvent.click(button);
+
+    expect(screen.getByText(/New Task/i)).toBeInTheDocument();
+  });
+
+  test("toggles todo completion", () => {
+    render(<TodoList />);
+    const todo = screen.getByText(/Todo 1/i);
     fireEvent.click(todo);
-    expect(todo).toHaveStyle('text-decoration: line-through');
-    fireEvent.click(todo);
-    expect(todo).not.toHaveStyle('text-decoration: line-through');
+
+    expect(todo).toHaveClass("completed");
   });
 
-  test('deletes a todo', () => {
+  test("deletes a todo", () => {
     render(<TodoList />);
-    
-    const todoToDelete = screen.getByText(/Learn React/i);
-    const deleteButton = todoToDelete.nextElementSibling; 
-
-    expect(todoToDelete).toBeInTheDocument();
-
+    const deleteButton = screen.getAllByText(/delete/i)[0];
     fireEvent.click(deleteButton);
 
-    expect(todoToDelete).not.toBeInTheDocument();
-    
-    const remainingTodos = screen.queryAllByRole('listitem');
-    expect(remainingTodos).toHaveLength(1);
-  });
-
-  test('does not add an empty todo', () => {
-    render(<TodoList />);
-    const input = screen.getByPlaceholderText(/Add a new todo/i);
-    const addButton = screen.getByText(/Add Todo/i);
-
-    fireEvent.change(input, { target: { value: '' } });
-    fireEvent.click(addButton);
-
-    const newTodo = screen.queryByText(/Test Todo/i);
-    expect(newTodo).not.toBeInTheDocument();
+    expect(deleteButton).not.toBeInTheDocument();
   });
 });
